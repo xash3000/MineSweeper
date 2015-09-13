@@ -6,9 +6,9 @@ import random
 
 class Game:
 
-    def __init__(self, master, total=0, count=0):
+    def __init__(self, master):
 
-        self.flags = 50
+        self.flags = 60
         self.createButtons(master)
 
         self.bottomFrame = Frame(root)
@@ -63,6 +63,7 @@ class Game:
             self.buttons[btn][0].config(bg='green')
             self.buttons[btn][0].config(state='disabled', relief=SUNKEN)
             self.count += 1
+            self.nearbyMines(btn)
             self.showNearby(btn)
             win = self.checkWin()
             if win:
@@ -86,7 +87,7 @@ class Game:
             showinfo('no flags', 'you run out of flags')
 
     def showNearby(self, btn):
-        if btn > 10 and btn < 190:
+        if btn > 20 and btn < 190:
             self.possible = [btn-21,btn+21, btn-20, btn+20,btn-19, btn+19,btn+1, btn-1]
             for i in self.possible:
                 try:
@@ -98,11 +99,40 @@ class Game:
                             self.buttons[i][0].config(state='disabled', relief=SUNKEN)
                             self.count += 1
                             self.buttons[i][4][0] == 0
+                            self.nearbyMines(i)
                 except KeyError:
                     pass
 
             if self.checkWin():
                 self.victory()
+
+    def nearbyMines(self, btn):
+        self.near = 0
+        if btn > 20 and btn < 190:
+            self.pos = [btn-21,btn+21, btn-20, btn+20,btn-19, btn+19,btn+1, btn-1]
+            for i in self.pos:
+                try:
+                    if self.buttons[i][1] == 'danger':
+                        self.near += 1
+                except KeyError:
+                    pass
+        if btn < 20:
+            self.pos2 = [btn+21,btn+20, btn+19,btn+1]
+            for i in self.pos:
+                try:
+                    if self.buttons[i][1] == 'danger':
+                        self.near += 1
+                except KeyError:
+                    pass
+        if btn > 190:
+            self.pos3 = [btn-21,btn-20, btn-19,btn-1]
+            for i in self.pos:
+                try:
+                    if self.buttons[i][1] == 'danger':
+                        self.near += 1
+                except KeyError:
+                    pass
+        self.buttons[btn][0].config(text=str(self.near), font=('Helvetica', 7))
 
     def lost(self):
         global root
@@ -130,7 +160,7 @@ class Game:
         self.flags = 50
         self.flagRemainning.config(text= 'flag Remainning : '+str(self.flags))
         for i in self.buttons:
-            self.buttons[i][0].config(bg='#8a8a8a')
+            self.buttons[i][0].config(bg='#8a8a8a', text='')
             self.buttons[i][0].config(state='normal', relief=RAISED)
             self.buttons[i][1] = random.choice(['safe', 'danger'])
         self.count = 0
