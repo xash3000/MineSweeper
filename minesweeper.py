@@ -1,13 +1,14 @@
 #!/usr/bin/python3.4
 from tkinter import *
+import time
 from tkinter.messagebox import *
 import random
 
 class Game:
 
-    def __init__(self, master, flags=50):
+    def __init__(self, master):
 
-        self.flags = flags
+        self.flags = 50
         self.createButtons(master)
 
         self.bottomFrame = Frame(root)
@@ -50,7 +51,7 @@ class Game:
         return lambda Button: self.rightClick(x)
 
     def leftClick(self, btn):
-        end = False
+        end = True
         check = self.buttons[btn][1]
         if check == 'safe':
             self.buttons[btn][0].config(bg='green')
@@ -72,8 +73,10 @@ class Game:
             self.buttons[btn][0].config(bg='blue')
             self.buttons[btn][0].config(state='disabled', relief=SUNKEN)
             self.buttons[btn][1] = 'safe'
-        self.flags -= 1
-        self.flagRemainning.config(text= 'flag Remainning : '+str(self.flags))
+            self.flags -= 1
+            self.flagRemainning.config(text= 'flag Remainning : '+str(self.flags))
+        else:
+            showinfo('no flags', 'you run out of flags')
 
     def showNearby(self, btn):
         if btn > 10 and btn < 190:
@@ -85,6 +88,10 @@ class Game:
 
     def lost(self):
         global root
+        for i in self.buttons:
+            if self.buttons[i][1] == 'danger':
+                self.buttons[i][0].config(bg='red')
+        time.sleep(1.5)
         msg = 'you lose ! do you want to play again?'
         answer = askquestion('play again',msg)
         if answer == 'yes':
@@ -102,7 +109,8 @@ class Game:
             self.quit()
 
     def reset(self):
-        self.flags = 20
+        self.flags = 50
+        self.flagRemainning.config(text= 'flag Remainning : '+str(self.flags))
         for i in self.buttons:
             self.buttons[i][0].config(bg='#8a8a8a')
             self.buttons[i][0].config(state='normal', relief=RAISED)
@@ -112,7 +120,7 @@ class Game:
         global root
         root.quit()
 
-        
+
 def main():
     global root
     root = Tk()
