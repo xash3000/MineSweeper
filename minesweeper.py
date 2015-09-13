@@ -6,7 +6,7 @@ import random
 
 class Game:
 
-    def __init__(self, master):
+    def __init__(self, master, total=0, count=0):
 
         self.flags = 50
         self.createButtons(master)
@@ -20,6 +20,12 @@ class Game:
         self.quitBtn = Button(self.bottomFrame, text='Quit', command=self.quit)
         self.quitBtn.grid(row=13, columnspan=2)
 
+        self.total = 0
+        self.count = 0
+        for i in self.buttons:
+            if self.buttons[i][4][0] == 1:
+                self.total += 1
+
     def createButtons(self, parent):
         self.buttons = {}
         row = 0
@@ -30,7 +36,8 @@ class Game:
             Button(parent, bg='#8a8a8a'),
             status,
             row,
-            col
+            col,
+            [0 if status == 'danger' else 1]
             ]
 
             self.buttons[x][0].bind('<Button-1>', self.leftClick_w(x))
@@ -42,7 +49,6 @@ class Game:
             for k in self.buttons:
                 self.buttons[k][0].grid(row= self.buttons[k][2], column= self.buttons[k][3])
 
-
     #i don't know why but you'll get error if you remove these two functions
     def leftClick_w(self, x):
         return lambda Button: self.leftClick(x)
@@ -51,19 +57,19 @@ class Game:
         return lambda Button: self.rightClick(x)
 
     def leftClick(self, btn):
-        end = True
         check = self.buttons[btn][1]
         if check == 'safe':
+
             self.buttons[btn][0].config(bg='green')
             self.buttons[btn][0].config(state='disabled', relief=SUNKEN)
-            self.buttons[btn][1] = 'clicked'
+            self.count += 1
+            print(self.total, self.count)
             self.showNearby(btn)
-            for i in self.buttons:
-                if self.buttons[i][1] == 'safe':
-                    end = False
-            if end == True:
+            win = self.checkWin()
+            if win:
                 self.victory()
-        else:
+
+        if check == 'danger':
             self.buttons[btn][0].config(bg='red')
             self.buttons[btn][0].config(state='disabled', relief=SUNKEN)
             self.lost()
@@ -72,9 +78,11 @@ class Game:
         if self.flags > 0:
             self.buttons[btn][0].config(bg='blue')
             self.buttons[btn][0].config(state='disabled', relief=SUNKEN)
-            self.buttons[btn][1] = 'safe'
             self.flags -= 1
             self.flagRemainning.config(text= 'flag Remainning : '+str(self.flags))
+            if self.buttons[btn][1] == 'safe':
+                self.count += 1
+
         else:
             showinfo('no flags', 'you run out of flags')
 
@@ -82,9 +90,21 @@ class Game:
         if btn > 10 and btn < 190:
             self.possible = [btn-21,btn+21, btn-20, btn+20,btn-19, btn+19,btn+1, btn-1]
             for i in self.possible:
-                if self.buttons[i][1] == 'safe':
-                    self.buttons[i][0].config(bg='green')
-                    self.buttons[i][0].config(state='disabled', relief=SUNKEN)
+                try:
+                    if self.buttons[i][1] == 'safe':
+                        if self.buttons[i][0]['bg'] == 'green':
+                            continue
+                        else:
+                            self.buttons[i][0].config(bg='green')
+                            self.buttons[i][0].config(state='disabled', relief=SUNKEN)
+                            self.count += 1
+                            print(self.total, self.count)
+                            self.buttons[i][4][0] == 0
+                except KeyError:
+                    pass
+
+            if self.checkWin():
+                self.victory()
 
     def lost(self):
         global root
@@ -115,6 +135,9 @@ class Game:
             self.buttons[i][0].config(bg='#8a8a8a')
             self.buttons[i][0].config(state='normal', relief=RAISED)
             self.buttons[i][1] = random.choice(['safe', 'danger'])
+
+    def checkWin(self):
+        return self.count == self.total
 
     def quit(self):
         global root
