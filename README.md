@@ -1,5 +1,4 @@
 # MineSweeper
-**Note : this software is still in development**
 
 minesweeper game written in python and tkinter
 
