@@ -63,7 +63,6 @@ class Game:
             self.buttons[btn][0].config(bg='green')
             self.buttons[btn][0].config(state='disabled', relief=SUNKEN)
             self.count += 1
-            print(self.total, self.count)
             self.showNearby(btn)
             win = self.checkWin()
             if win:
@@ -98,7 +97,6 @@ class Game:
                             self.buttons[i][0].config(bg='green')
                             self.buttons[i][0].config(state='disabled', relief=SUNKEN)
                             self.count += 1
-                            print(self.total, self.count)
                             self.buttons[i][4][0] == 0
                 except KeyError:
                     pass
@@ -135,6 +133,11 @@ class Game:
             self.buttons[i][0].config(bg='#8a8a8a')
             self.buttons[i][0].config(state='normal', relief=RAISED)
             self.buttons[i][1] = random.choice(['safe', 'danger'])
+        self.count = 0
+        self.total = 0
+        for i in self.buttons:
+            if self.buttons[i][4][0] == 1:
+                self.total += 1
 
     def checkWin(self):
         return self.count == self.total
