@@ -14,7 +14,7 @@ class Game:
         self.bottomFrame = Frame(root)
         self.bottomFrame.grid(row=11, columnspan=10)
 
-        self.flagRemainning = Label(self.bottomFrame, text='flag Remainning : '+str(self.flags))
+        self.flagRemainning = Label(self.bottomFrame, text='Flag Remaining : '+str(self.flags))
         self.flagRemainning.grid(row=12)
 
         self.quitBtn = Button(self.bottomFrame, text='Quit', command=self.quit)
@@ -78,7 +78,7 @@ class Game:
             self.buttons[btn][0].config(bg='blue')
             self.buttons[btn][0].config(state='disabled', relief=SUNKEN)
             self.flags -= 1
-            self.flagRemainning.config(text= 'flag Remainning : '+str(self.flags))
+            self.flagRemainning.config(text= 'Flag Remaining : '+str(self.flags))
             if self.buttons[btn][1] == 'safe':
                 self.count += 1
 
@@ -128,7 +128,7 @@ class Game:
 
     def reset(self):
         self.flags = 50
-        self.flagRemainning.config(text= 'flag Remainning : '+str(self.flags))
+        self.flagRemainning.config(text= 'Flag Remaining : '+str(self.flags))
         for i in self.buttons:
             self.buttons[i][0].config(bg='#8a8a8a')
             self.buttons[i][0].config(state='normal', relief=RAISED)
