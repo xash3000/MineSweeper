@@ -31,7 +31,7 @@ class Game:
         row = 0
         col = 0
         for x in range(0, 200):
-            status = random.choice(['safe'])
+            status = random.choice(['safe', 'danger'])
             self.buttons[x] = [
             Button(parent, bg='#8a8a8a'),
             status,
